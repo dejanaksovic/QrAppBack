@@ -1,0 +1,41 @@
+const adminAuth = async(req, res, next) => {
+  const password = req.headers?.authorization;
+
+  console.log(`Inside \nHeaders`);
+  console.log(req.headers);
+
+  if(!password) {
+    return res.status(401).json({
+      message: "Unauthorized access",
+    })
+  }
+
+  if(password !== process.env.ADMIN_PASSWORD) {
+    return res.status(403).json({
+      message: "Forbbiden action",
+    })
+  }
+  next();
+}
+
+const workerAuth = async(req, res, next) => {
+  const password = req.Headers?.Authhorization;
+
+  if(!password) {
+    return res.status(401).json({
+      message: "Unauthorized access",
+    })
+  }
+
+  if(password !== process.env.WORKER_PASSWORD) {
+    return res.status(403).json({
+      message: "Forbbiden action",
+    })
+  }
+  next();
+}
+
+module.exports = {
+  adminAuth,
+  workerAuth,
+}

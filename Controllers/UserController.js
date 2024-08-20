@@ -5,6 +5,12 @@ const createUser = async (req, res) => {
   const { name, balance } = req.body;
   let user;
 
+  if(!name) {
+    return res.status(400).json({
+      message: "Korisnik mora imati ime",
+    })
+  }
+
   if(!balance || balance < 0) {
     console.log(balance);
     return res.status(400).json({
@@ -23,6 +29,7 @@ const createUser = async (req, res) => {
       const idToUrl = `${selfUrl}/users/${user._id}`;
       qr = await QR.toDataURL(idToUrl);
       user.Qr = qr;
+      user.save();
     }
     catch(err) {
       console.log(err);
@@ -85,6 +92,13 @@ const changeUserBalance = async (req, res) => {
   const {id} = req.params;
   const {balance} = req.body;
 
+  // ERROR HANDLING FOR BALANCE
+  if(isNaN(Number(balance))) {
+    return res.status(400).json({
+      message: "Nevalidna vrednost sredstava koji se dodaju ili oduzimaju",
+    })
+  }
+
   try {
     user = await User.findById(id);
   }
@@ -100,7 +114,7 @@ const changeUserBalance = async (req, res) => {
     })
 
   // Inssuficient funds case
-  if(user.Balance + balance < 0) {
+  if(Number(user.Balance) + Number(balance) < 0) {
     return res.status(400).json({
       message: "Inssuficcient funds",
     })
@@ -108,7 +122,7 @@ const changeUserBalance = async (req, res) => {
 
   // Catch for non number balance values
   try {
-    user.Balance += balance;
+    user.Balance = Number(user.Balance) + Number(balance);
     user.Transactions.push(balance);
     user.save();
   }
