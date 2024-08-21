@@ -1,8 +1,14 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-  Name: String,
-  Balance: Number,
+  Name: {
+    type: String,
+    require: true,
+  },
+  Balance: {
+    type: Number,
+    default: 0,
+  },
   Qr: String,
   Transactions: [Number],
 });

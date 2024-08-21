@@ -12,7 +12,6 @@ const createUser = async (req, res) => {
   }
 
   if(!balance || balance < 0) {
-    console.log(balance);
     return res.status(400).json({
       message: "Invalid balance value",
     })
