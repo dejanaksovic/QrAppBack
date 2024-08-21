@@ -1,9 +1,6 @@
 const adminAuth = async(req, res, next) => {
   const password = req.headers?.authorization;
 
-  console.log(`Inside \nHeaders`);
-  console.log(req.headers);
-
   if(!password) {
     return res.status(401).json({
       message: "Unauthorized access",
@@ -19,7 +16,7 @@ const adminAuth = async(req, res, next) => {
 }
 
 const workerAuth = async(req, res, next) => {
-  const password = req.Headers?.Authhorization;
+  const password = req.headers?.authorization;
 
   if(!password) {
     return res.status(401).json({

@@ -122,6 +122,11 @@ const changeUserBalance = async (req, res) => {
 
   // Catch for non number balance values
   try {
+    // Saving only 5 last transactions
+    if(user.Transactions.length > 4) {
+      const a = user.Transactions.shift();
+      console.log(`Popped ${a}`);
+    }
     user.Balance = Number(user.Balance) + Number(balance);
     user.Transactions.push(balance);
     user.save();
