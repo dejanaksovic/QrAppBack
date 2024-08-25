@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const User = require("../Models/User");
 const QR = require('qrcode');
 
@@ -24,8 +25,8 @@ const createUser = async (req, res) => {
     });
     let qr;
     try {
-      const selfUrl = process.env.SELF_URL;
-      const idToUrl = `${selfUrl}/users/${user._id}`;
+      const selfUrl = process.env.FRONT_URL;
+      const idToUrl = `${selfUrl}/worker?id=${user._id}`;
       qr = await QR.toDataURL(idToUrl);
       user.Qr = qr;
       user.save();
@@ -93,8 +94,16 @@ const changeUserBalance = async (req, res) => {
 
   // ERROR HANDLING FOR BALANCE
   if(isNaN(Number(balance))) {
+    console.log(req.body);
     return res.status(400).json({
       message: "Nevalidna vrednost sredstava koji se dodaju ili oduzimaju",
+    })
+  }
+
+  // Id checking
+  if(!id || !mongoose.isValidObjectId(id)) {
+  return res.status(404).json({
+      message: "User not found",
     })
   }
 
@@ -105,6 +114,7 @@ const changeUserBalance = async (req, res) => {
     res.status(500).json({
       message: "unutrasnja greska, kontaktirajte administratora",
     })
+    console.log(err);
   }
 
   if(!user)
