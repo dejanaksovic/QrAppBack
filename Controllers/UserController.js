@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 const mongoose = require('mongoose');
-=======
-const { default: mongoose } = require("mongoose");
->>>>>>> e56fa63ca44e7feb7fb347acc5078424d7facb42
 const User = require("../Models/User");
 const QR = require('qrcode');
 
@@ -34,13 +30,8 @@ const createUser = async (req, res) => {
     });
     let qr;
     try {
-<<<<<<< HEAD
-      const selfUrl = process.env.SELF_URL;
-      const idToUrl = `${selfUrl}?id=${user._id}`;
-=======
       const selfUrl = process.env.FRONT_URL;
-      const idToUrl = `${selfUrl}/worker?id=${user._id}`;
->>>>>>> e56fa63ca44e7feb7fb347acc5078424d7facb42
+      const idToUrl = `${selfUrl}?id=${user._id}`;
       qr = await QR.toDataURL(idToUrl);
       user.Qr = qr;
       user.save();
