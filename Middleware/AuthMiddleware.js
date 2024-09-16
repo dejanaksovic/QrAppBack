@@ -6,7 +6,8 @@ const adminAuth = async(req, res, next) => {
       message: "Unauthorized access",
     })
   }
-
+  console.log(password);
+  console.log(process.env.ADMIN_PASSWORD);
   if(password !== process.env.ADMIN_PASSWORD) {
     return res.status(403).json({
       message: "Forbbiden action",
