@@ -130,6 +130,7 @@ const addOrder = async (req, res) => {
   const {id} = req.params;
   const {articlesOrdered} = req.body;
 
+  // Type checking
   if(!articlesOrdered || !id) {
     return res.status(400).json({
       message: "Artikli i id moraju biti dati",
@@ -155,29 +156,173 @@ const addOrder = async (req, res) => {
     })
   }
 
-  // CalculatePoints
-  let pointsCount = 0;
+  // Initial variables
+  let coinsToAddCount = 0;
+  const transaction = {
+    Articles: [],
+    Quantities: [],
+    Coins: 0,
+  }
+  // Went wrong flag
+  let notValidName = false;
+  let notValidQuantity = false;
 
-  articlesStatic.forEach(e => {
-    const orderedArticle = articlesOrdered?.find(ao => ao.name === e.name);
-    const quantity = Number(orderedArticle?.quantity);
-    if(!isNaN(quantity)) {
-      console.log(pointsCount);
-      pointsCount += e.price * Number(quantity);
+  // Handle order
+  articlesOrdered.forEach(e => {
+    // Init check to skip itterations if needed
+    if(notValidName || notValidQuantity)
+      return;
+    // Find article by name
+    const orderForTransaction = articlesStatic.find(as => e.name === as.name);
+    // Handle not found article
+    if(!orderForTransaction) {
+      notValidName = true;
+      return;
     }
+    // Check if quantity is number and handle it
+    const quantity = Number(e.quantity);
+    if(isNaN(quantity)) {
+      notValidQuantity = true;
+      return;
+    }
+    // CHECKS PASS
+    transaction.Articles.push(orderForTransaction.name);
+    transaction.Quantities.push(quantity);
+    coinsToAddCount+= quantity * orderForTransaction.price;
+  })
+  // Handle not valid article name
+  if(notValidName) {
+    return res.status(404).json({
+      message: "Trazeni artikal nije pronadjen"
     })
-
-  if(isNaN(pointsCount)) {
+  }
+  // Handle article quantity not given or not number
+  if(notValidQuantity) {
     return res.status(400).json({
-      message: "Kvantitivnost proizvoda mora biti broj",
+      message: "Kvantitet artikala mora biti broj"
+    })
+  }
+  // Add to database and save
+  transaction.Coins = coinsToAddCount;
+  user.Transactions.push(transaction);
+  user.Coins+= coinsToAddCount;
+  try {
+  await user.save();
+  }
+  catch(err) {
+    return res.status(500).json({
+      message: "Unutrasnja greska, kontaktirajte administratora"
+    })
+  }
+  return res.status(200).json({
+    user,
+  })
+}
+
+const buyWithCoins = async(req, res) => {
+  const { id } = req.params;
+  const { articlesToBuy } = req.body;
+
+  let user;
+
+  // Check for required values
+  if(!id || !articlesToBuy) {
+    return res.status(400).json({
+      message: "Artikli i id moraju biti dati"
+    })
+  }
+  if(!mongoose.isValidObjectId(id)) {
+    return res.status(404).json({
+      message: "Korisnik nije pronadjen",
+    })
+  }
+  // Find user and handle not found
+  try {
+    user = await User.findById(id);
+    if(!user) {
+      return res.status(404).json({
+        message: "Korisnik nije pronadjen",
+      })
+    }
+  }
+  catch(err) {
+    return res.status(500).json({
+      message: "Unutrasnja greska, kontaktirajte administratora",
     })
   }
 
-  user.Coins += pointsCount;
-  user.save();
+  // Init values
+  const transaction = {
+    Articles: [],
+    Quantities: [],
+    Coins: 0,
+  }
+  let coinsCount = 0;
+  let nameNotValid = false;
+  let nameNotValidValue = "";
+  let quantityNotValid = false;
+  let quantityNotValidValue = "";
+
+  articlesToBuy.forEach(e => {
+    // Initial checks to skip most of calculation
+    if(nameNotValid || quantityNotValid) {
+      return;
+    }
+    const articleForTransaction = articlesStatic.find(as => as.name == e.name);
+    // Check and handle name
+    if(!articleForTransaction) {
+      nameNotValid = true;
+      nameNotValidValue = articleForTransaction.name;
+      return;
+    }
+    // Check and handle quantityt
+    let quantity = Number(e.quantity);
+    if(isNaN(quantity)) {
+      quantityNotValid = true;
+      quantityNotValidValue = articleForTransaction.quantity;
+      return;
+    }
+    // CHECKS PASS
+    transaction.Articles.push(articleForTransaction.name);
+    transaction.Quantities.push(quantity);
+    coinsCount+= quantity * articleForTransaction.buyPrice;
+  })
+
+  // Handle not valid name
+  if(nameNotValid){
+    return res.status(404).json({
+      message: `Artikal ${nameNotValidValue} nije pronadjen`,
+    })
+  }
+  // Handle not valid quantity 
+  if(quantityNotValid) {
+    return res.status(400).json({
+      message: `Kvantitet artikla mora biti broj, ${quantityNotValidValue} nije broj`
+    })
+  }
+
+  // Validate that user has enough coins
+  if(user.Coins - coinsCount < 0) {
+    return res.status(400).json({
+      message: "Korisnik nema dovoljno sredstava",
+    })
+  }
+
+  // VALIDATION DONE
+  transaction.Coins = coinsCount * (-1);
+  user.Coins -= coinsCount;
+  user.Transactions.push(transaction);
+  try {
+    await user.save();
+  }
+  catch(err) {
+    return res.status(500).json({
+      message: "Unutrasnja greska, kontaktirajte administratora",
+    })
+  }
   return res.status(200).json({
-    user
-  });
+    user,
+  })
 }
 
 const deleteUserById = async(req, res) => {
@@ -213,5 +358,6 @@ module.exports = {
   getAllUserInfo,
   getUserById,
   addOrder,
+  buyWithCoins,
   deleteUserById,
 }
