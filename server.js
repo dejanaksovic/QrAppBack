@@ -4,6 +4,9 @@ const cors = require('cors');
 const connectDB = require('./Configs/Config');
 const express = require('express');
 
+// Const error handling middleware
+const { JsonNotValidMiddleware } = require("./Middleware/ErrorHandleMiddleware");
+
 // ROUTERS
 const userRouter = require("./Routers/UserRouter");
 
@@ -12,6 +15,7 @@ const app = express();
 app.use(express.urlencoded());
 app.use(express.json());
 app.use(cors());
+app.use(JsonNotValidMiddleware);
 // CONNECT TO DB
 connectDB(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@clusterqr.ifnvw.mongodb.net/?retryWrites=true&w=majority&appName=ClusterQR`);
 
