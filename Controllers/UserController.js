@@ -72,6 +72,17 @@ const getAllUserInfo = async (req, res) => {
 const getUserById = async (req, res) => {
   let user;
   const { id } = req.params;
+  console.log(id);
+  if(!id) {
+    return res.status(404).json({
+      message: "Korisnik nije pronadjen",
+    })
+  }
+  if(!mongoose.isValidObjectId(id)) {
+    return res.status(404).json({
+      message: "Korisnik nije pronadjen",
+    })
+  }
   try {
     user = await User.findById(id);
   }
