@@ -7,7 +7,9 @@ const adminAuth = async(req, res, next) => {
     })
   }
   console.log(password);
+  console.log("=========");
   console.log(process.env.ADMIN_PASSWORD);
+  console.log(password === process.env.ADMIN_PASSWORD);
   if(password !== process.env.ADMIN_PASSWORD) {
     return res.status(403).json({
       message: "Forbbiden action",
