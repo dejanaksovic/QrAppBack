@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 // CONTROLLER
-const { deleteUserById, createUser, getAllUserInfo, getUserById, changeUserName, addOrder, buyWithCoins } = require('../Controllers/UserController');
+const { deleteUserById, createUser, getAllUserInfo, getUserById, changeUserName, addOrder, buyWithCoins, confirmWorkerPassword } = require('../Controllers/UserController');
 
 // MIDDLEWARE
 const { adminAuth, workerAuth } = require('../Middleware/AuthMiddleware')
@@ -36,5 +36,12 @@ router.post("/buy/:id", workerAuth, buyWithCoins);
 // Delete user by id
 // [ADMIN]
 router.delete('/:id', adminAuth, deleteUserById);
+
+// LOGIN ADDONS
+
+// @GET
+// Confirm password for worker
+// [WORKER]
+router.get("/login/worker", workerAuth, confirmWorkerPassword);
 
 module.exports = router;

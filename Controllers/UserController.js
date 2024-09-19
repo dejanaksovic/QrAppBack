@@ -143,9 +143,14 @@ const addOrder = async (req, res) => {
   const {articlesOrdered} = req.body;
 
   // Type checking
-  if(!articlesOrdered || !id) {
+  if(!articlesOrdered) {
     return res.status(400).json({
-      message: "Artikli i id moraju biti dati",
+      message: "artikli moraju biti dati",
+    })
+  }
+  if(!id) {
+    return res.status(404).json({
+      message:"Korisnik nije pronadjen",
     })
   }
   // Find user
@@ -238,9 +243,14 @@ const buyWithCoins = async(req, res) => {
   let user;
 
   // Check for required values
-  if(!id || !articlesToBuy) {
+  if(!articlesToBuy) {
     return res.status(400).json({
-      message: "Artikli i id moraju biti dati"
+      message: "Artikli moraju biti dati"
+    })
+  }
+  if(!id) {
+    return res.status(404).json({
+      message: "Trazeni korisnik nije pronadjen",
     })
   }
   if(!mongoose.isValidObjectId(id)) {
@@ -364,6 +374,10 @@ const deleteUserById = async(req, res) => {
   }
 }
 
+const confirmWorkerPassword = async (req, res) => {
+  return res.status(200).end();
+}
+
 module.exports = {
   createUser,
   changeUserName,
@@ -372,4 +386,5 @@ module.exports = {
   addOrder,
   buyWithCoins,
   deleteUserById,
+  confirmWorkerPassword,
 }
