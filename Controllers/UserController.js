@@ -106,13 +106,14 @@ const changeUserName = async (req, res) => {
   let user;
   const { id } = req.params;
   const { name } = req.body;
+  console.log(req.body);
   if(!id || !mongoose.isValidObjectId(id)) {
     return res.status(404).json({
       message: "Korisnik nije pronadjen"
     })
   }
   if(!name) {
-    return res.status(404).json({
+    return res.status(400).json({
       message:"Da biste promenili ime morate postaviti ime",
     })
   }
