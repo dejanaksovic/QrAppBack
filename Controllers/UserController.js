@@ -143,7 +143,8 @@ const addOrder = async (req, res) => {
   const {articlesOrdered} = req.body;
 
   // Type checking
-  if(!articlesOrdered) {
+  console.log(articlesOrdered);
+  if(!articlesOrdered || !Array.isArray(articlesOrdered) || articlesOrdered.length === 0) {
     return res.status(400).json({
       message: "artikli moraju biti dati",
     })
@@ -198,7 +199,7 @@ const addOrder = async (req, res) => {
     }
     // Check if quantity is number and handle it
     const quantity = Number(e.quantity);
-    if(isNaN(quantity)) {
+    if(isNaN(quantity) || quantity === 0) {
       notValidQuantity = true;
       return;
     }
@@ -216,7 +217,7 @@ const addOrder = async (req, res) => {
   // Handle article quantity not given or not number
   if(notValidQuantity) {
     return res.status(400).json({
-      message: "Kvantitet artikala mora biti broj"
+      message: "Kvantitet artikala mora biti broj veci od nule"
     })
   }
   // Add to database and save
@@ -243,7 +244,7 @@ const buyWithCoins = async(req, res) => {
   let user;
 
   // Check for required values
-  if(!articlesToBuy) {
+  if(!articlesToBuy || Array.isArray(articlesToBuy) || articlesToBuy.length === 0) {
     return res.status(400).json({
       message: "Artikli moraju biti dati"
     })
