@@ -16,14 +16,16 @@ const transactionSchema = new mongoose.Schema({
       Quantity: {
         type: Number,
         require: true,
-      }
-    }
+      },
+    },
   ],
   Coins: {
     type: Number,
     require: true,
-  }
+  },
+}, {
+  timestamps: true,
 });
 
-const Transaction = new mongoose.Model("Transaction", transactionSchema);
+const Transaction = mongoose.model("Transaction", transactionSchema);
 module.exports = Transaction;

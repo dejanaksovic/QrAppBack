@@ -10,6 +10,7 @@ const { JsonNotValidMiddleware } = require("./Middleware/ErrorHandleMiddleware")
 // ROUTERS
 const userRouter = require("./Routers/UserRouter");
 const articleRouter = require("./Routers/ArticleRouter");
+const transactionsRouter = require("./Routers/TransactionRouter");
 
 const app = express();
 
@@ -29,6 +30,7 @@ connectDB(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@clu
 // CONNECT ROUTERS
 app.use("/users", userRouter);
 app.use("/articles", articleRouter);
+app.use("/transactions", transactionsRouter);
 
 app.listen(3000, () => {
   console.log("hello");
