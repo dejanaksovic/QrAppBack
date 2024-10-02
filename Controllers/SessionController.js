@@ -15,7 +15,7 @@ const confirmWorkerLogin = async (req, res) => {
 
 const confirmAdminLogin = async (req, res) => {
   const { password } = req.body;
-
+  console.log(req.body);
   if(!password) {
     return res.status(401).json({
       message: "Kredencijali moraju biti dati",
