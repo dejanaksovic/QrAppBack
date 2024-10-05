@@ -10,17 +10,21 @@ const router = new express.Router();
 // Gets all the articles
 // []
 router.get("/", getAll);
+// @GET /articles/{id}
+// Gets the article by id
+// []
+router.get("/:id", getById);
 // @POST /articles
 // Add a new article
 // [ADMIN]
-router.post("/", createArticle);
-// @POST /articles/id
+router.post("/", adminAuth, createArticle);
+// @PUT /articles/id
 // Change article by id
 // [ADMIN]
-router.post("/:id", updateArticle);
+router.put("/:id", adminAuth, updateArticle);
 // @DELETE /articles/id
 // Delte article by id
 // [ADMIN]
-router.delete("/:id", deleteArticle);
+router.delete("/:id", adminAuth, deleteArticle);
 
 module.exports = router;
