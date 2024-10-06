@@ -21,7 +21,7 @@ router.post("/", adminAuth, createArticle);
 // @PUT /articles/id
 // Change article by id
 // [ADMIN]
-router.put("/:id", adminAuth, updateArticle);
+router.patch("/:id", adminAuth, updateArticle);
 // @DELETE /articles/id
 // Delte article by id
 // [ADMIN]

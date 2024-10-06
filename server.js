@@ -19,11 +19,12 @@ const app = express();
 const corsOptions = {
 origin: process.env.FRONT_URL,
 methods: "GET, POST, PUT, PATCH, DELETE",
+
 }
 
 app.use(express.urlencoded());
 app.use(express.json());
-app.use(cors());
+app.use(cors(process.env.ENVIROMENT === "DEV" ? corsOptions : undefined));
 app.use(JsonNotValidMiddleware);
 // CONNECT TO DB
 connectDB(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@clusterqr.ifnvw.mongodb.net/?retryWrites=true&w=majority&appName=ClusterQR`);
