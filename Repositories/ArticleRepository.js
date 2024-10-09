@@ -49,7 +49,7 @@ const getById = async (id) => {
     return new ErrorType(404, "Nije pronadjen artikal", {id});
   }
   try {
-    const article = await Article.findById();
+    const article = await Article.findById(id);
     if(!article) {
       return new ErrorType(404, "Artikal nije pronadjen", {id});
     }

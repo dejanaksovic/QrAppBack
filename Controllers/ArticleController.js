@@ -20,7 +20,7 @@ const getArticleById = async (req, res)  => {
   const response = new Response(res);
   const { id } = req.params;
   
-  response.handleResponse(await getById());
+  response.handleResponse(await getById(id));
 }
 
 const updateArticleById = async (req, res) => {

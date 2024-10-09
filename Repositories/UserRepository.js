@@ -103,13 +103,13 @@ class UserRepository {
     if(nameStatus instanceof ErrorType) {
       return nameStatus;
     } 
-    const paramsStatus = this.validateInput(name, coins);
+    // cheating
+    const paramsStatus = this.validateInput(name ?? "some", coins);
     if(paramsStatus instanceof ErrorType) {
       return paramsStatus;
     }
     try {
       const user = await User.findByIdAndUpdate(id, { Name: name, Coins: coins }, {new: true});
-      console.log(user);
       if(!user) {
         return new ErrorType(404, "Korisnik nije pronadjen", { id });
       }
