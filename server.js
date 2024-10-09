@@ -3,7 +3,6 @@ require('dotenv').config();
 const cors = require('cors');
 const connectDB = require('./Configs/Config');
 const express = require('express');
-const { writeLog } = require("./Utils/Logger");
 
 // Const error handling middleware
 const { JsonNotValidMiddleware } = require("./Middleware/ErrorHandleMiddleware");
@@ -21,8 +20,6 @@ const corsOptions = {
 origin: process.env.FRONT_URL,
 methods: "GET, POST, PUT, PATCH, DELETE",
 }
-
-writeLog("error", {message: "This is a test"});
 
 app.use(express.urlencoded());
 app.use(express.json());

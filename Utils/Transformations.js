@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const ErrorType = require("../Responses/ErrorType");
 
 const validatePagination = (pageStart, pageSlice) => {
@@ -8,7 +9,15 @@ const validatePagination = (pageStart, pageSlice) => {
     return new ErrorType(400, "Nevalidan parametar", { pageSlice });
   }
 
-  return true;
+  return null;
+}
+
+const validateId = (id) => {
+  if(!id || !mongoose.isValidObjectId(id)) {
+    return new ErrorType(404, "Nije pronadjen", {id});
+  }
+
+  return null;
 }
 
 const dateReadableFormat = (date) => {
@@ -23,4 +32,5 @@ const dateReadableFormat = (date) => {
 module.exports = {
   validatePagination,
   dateReadableFormat,
+  validateId,
 }
