@@ -1,8 +1,4 @@
-const mongoose = require('mongoose');
-
 const UserRepository = require("../Repositories/UserRepository");
-const QR = require('qrcode');
-const articlesStatic = require("../Utils/Articles");
 const Response = require('../Responses/Response');
 
 

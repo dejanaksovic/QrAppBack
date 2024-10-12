@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { dateReadableFormat } = require('./Transformations');
 
 const checkForLogFile = (logName) => {
   try {
@@ -12,9 +13,9 @@ const checkForLogFile = (logName) => {
 
 const writeLog = (type, log) => {
   const logDate = new Date();
-  const logForma = `${newDat}`
+  const logFormat = `${dateReadableFormat(logDate)} // ${log.message}`
   try {
-    fs.appendFileSync("./logs/db.log", `${log}`);
+    fs.appendFileSync("./logs/db.log", `${logFormat}\n`);
   }
   catch(err) {
     console.log(err);

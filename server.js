@@ -12,6 +12,7 @@ const userRouter = require("./Routers/UserRouter");
 const articleRouter = require("./Routers/ArticleRouter");
 const transactionsRouter = require("./Routers/TransactionRouter");
 const sessionRouter = require("./Routers/SessionRouter");
+const categoryRouter = require("./Routers/CategoryRouter");
 
 const app = express();
 
@@ -32,7 +33,8 @@ connectDB(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@clu
 app.use("/users", userRouter);
 app.use("/articles", articleRouter);
 app.use("/transactions", transactionsRouter);
-app.use("/sessions", sessionRouter)
+app.use("/sessions", sessionRouter);
+app.use("/categories", categoryRouter);
 
 app.listen(3000, () => {
   console.log("hello");

@@ -4,15 +4,16 @@ const Response = require("../Responses/Response");
 const createArticle = async (req, res) => {
   // Injection
   const response = new Response(res);
-  const { name, price } = req.body;
+  const { name, price, categoryId } = req.body;
 
-  response.handleResponse(await create(name, price));
+  response.handleResponse(await create(name, price, categoryId));
 }
 
 const getAllArticles = async (req, res) => {
   // Injection
+  const { ps, pc, category } = req.query;
   const response = new Response(res);
-  response.handleResponse(await get());
+  response.handleResponse(await get(ps, pc));
 }
 
 const getArticleById = async (req, res)  => {

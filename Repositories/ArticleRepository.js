@@ -1,11 +1,11 @@
 const Article = require("../Models/Article");
 const ErrorType = require("../Responses/ErrorType");
+const CategoryRepository = require("../Repositories/CategoryRepository");
 const { writeLog } = require("../Utils/Logger");
 const { validatePagination, validateId } = require("../Utils/Transformations");
 
 // VALIDATION RETURNS NULL FOR SEMANTIC GYMNASTICS
 const validateName = (name) => {
-  console.log("inside");
   if(!name)
     return new ErrorType(400, "Neophodan parametar", {name});
   return null
@@ -23,9 +23,21 @@ const validatePrice = (price) => {
   return null;
 }
 
+const validateCategory = async (categoryId) => {
+  const validationError = validateId(categoryId);
+  if(validationError) {
+    return validationError;
+  }
+  const categoryError = await CategoryRepository.getById(categoryId);
+  if(categoryError instanceof ErrorType) {
+    return categoryError;
+  }
+  return null;
+}
+
 // TODO: IMPLEMENT CATEGORIES
-const create = async (name, price, category) => {
-  const status = validateName(name) || validatePrice(price);
+const create = async (name, price, categoryId) => {
+  const status = validateName(name) || validatePrice(price) || await validateCategory(categoryId);
   if(status) {
     return status;
   }
@@ -34,6 +46,7 @@ const create = async (name, price, category) => {
     const article = await Article.create({
       Name: name,
       Price: price,
+      Category: categoryId,
     })
     return article;
   }
@@ -61,9 +74,8 @@ const getById = async (id) => {
   }
 }
 
-const updateById = async (id, name, price) => {
-  console.log(name);
-  const validationErr = validateId(id) || name ? validateName(name) : null || price ? validatePrice(price) : null;
+const updateById = async (id, name, price, categoryId) => {
+  const validationErr = validateId(id) || name ? validateName(name) : null || price ? validatePrice(price) : null || categoryId ? validateCategory(categoryId) : null;
   if(validationErr) {
     return validationErr;
   }

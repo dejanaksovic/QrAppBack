@@ -8,6 +8,11 @@ const articlesSchema = new mongoose.Schema({
   Price: {
     type: Number,
     require: true,
+  },
+  Category: {
+    type: mongoose.Schema.ObjectId,
+    required: true,
+    ref: "Category",
   }
 });
 
