@@ -113,13 +113,17 @@ const deleteById = async(id) => {
   }
 }
 
-const get = async (ps, pc) => {
-  const paginationError = validatePagination(ps, pc);
-  if(paginationError) {
-    return paginationError;
+const get = async (ps, pc, categoryId) => {
+  // Default ps, and pc
+  ps = ps ?? 0;
+  pc = pc ?? 5;
+  console.log(categoryId);
+  const parameterError = validatePagination(ps, pc) || categoryId ? await validateCategory(categoryId) : null;
+  if(parameterError) {
+    return parameterError;
   }
   try {
-    const articles = await Article.find().limit(pc).skip(ps*pc);
+    const articles = await Article.find({Category: categoryId}).limit(pc).skip(ps*pc);
     return articles;
   }
   catch(err) {

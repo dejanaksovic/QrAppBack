@@ -11,9 +11,9 @@ const createArticle = async (req, res) => {
 
 const getAllArticles = async (req, res) => {
   // Injection
-  const { ps, pc, category } = req.query;
+  const { ps, pc, categoryId } = req.query;
   const response = new Response(res);
-  response.handleResponse(await get(ps, pc));
+  response.handleResponse(await get(ps, pc, categoryId));
 }
 
 const getArticleById = async (req, res)  => {
