@@ -29,8 +29,20 @@ const dateReadableFormat = (date) => {
   return `${month}.${day} ${hours}:${minutes}`;
 }
 
+const validateDate = (date) => {
+  if(!date) {
+    return new ErrorType(400, "Mora postojati", {date});
+  }
+  const testDate = new Date(date);
+  if(isNaN(testDate)) {
+    return new ErrorType(400, "Nevalidan format", {date});
+  }
+  return testDate;
+}
+
 module.exports = {
   validatePagination,
   dateReadableFormat,
   validateId,
+  validateDate
 }

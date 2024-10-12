@@ -4,7 +4,7 @@ const ArticleRepository = require("../Repositories/ArticleRepository");
 const ErrorType = require("../Responses/ErrorType");
 const Transaction = require("../Models/Transaction");
 const { writeLog } = require("../Utils/Logger");
-const { validateId } = require("../Utils/Transformations");
+const { validateId, validateDate } = require("../Utils/Transformations");
 
 const validateType = (type) => {
   if(!type) {
@@ -160,13 +160,25 @@ const deleteById = async(id) => {
   }
 }
 
-const get = async (ps, pc) => {
+const get = async (ps, pc, dateStart, dateEnd) => {
   // Default pagination
   ps = ps ?? 0;
   pc = pc ?? 5;
 
+
+  const isValidDate = validateDate(dateStart) || validateDate(dateEnd);
+
+  if(isValidDate instanceof ErrorType) {
+    return isValidDate;
+  }
+
   try {
-    const transactions = await Transaction.find().limit(pc).skip(pc*ps);
+    const transactions = await Transaction.find({
+      createdAt: {
+        $lte: dateEnd,
+        $gte: dateStart,
+      }
+    }).limit(pc).skip(pc*ps);
     return transactions;
   }
   catch(err) {

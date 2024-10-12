@@ -12,7 +12,8 @@ const addTransaction = async (req, res) => {
 const getAllTransactions = async (req, res) => {
   // Inject
   const response = new Response(res);
-  response.handleResponse(await TransactionRepository.get());
+  const { ps, pc, dateStart, dateEnd } = req.query;
+  response.handleResponse(await TransactionRepository.get(ps, pc, dateStart, dateEnd));
 }
 
 const getUserTransactions = async (req, res) => {
