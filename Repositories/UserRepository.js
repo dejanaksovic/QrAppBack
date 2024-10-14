@@ -2,14 +2,15 @@ const mongoose = require('mongoose');
 const User = require("../Models/User");
 const ErrorType = require("../Responses/ErrorType");
 const { validatePagination } = require("../Utils/Transformations")
+const { errorCodes } = require("../Utils/Enums");
 
 class UserRepository {
   static validateInput(name, initCoins) {
     if(!name) {
-      return new ErrorType(400, "Neophodan parametar", { name: name });
+      return new ErrorType(errorCodes.UserError, "Neophodan parametar", { name: name });
     }
     if(initCoins && isNaN(initCoins)) {
-      return new ErrorType(400, "Nevalidan parametar", {coins: initCoins});
+      return new ErrorType(errorCodes.UserError, "Nevalidan parametar", {coins: initCoins});
     }
     return true;
   }
@@ -39,7 +40,7 @@ class UserRepository {
       return users;
     }
     catch(err) {
-      return new ErrorType(500, "Unutrasnja greska", { DbErr: "Connection error" });
+      return new ErrorType(errorCodes.InteralError, "Unutrasnja greska", { DbErr: "Connection error" });
     }
   }
 
@@ -56,13 +57,13 @@ class UserRepository {
       })
 
       if(!user) {
-        return new ErrorType(500, "Unutrasnja greska", { DbErr: "No connection" });
+        return new ErrorType(errorCodes.InteralError, "Unutrasnja greska", { DbErr: "No connection" });
       }
 
       return user;
     }
     catch(err) {
-      return new ErrorType(500, "Unutrasnja greska", { DbErr: "No connection" });
+      return new ErrorType(errorCodes.InteralError, "Unutrasnja greska", { DbErr: "No connection" });
     }
 
   }
@@ -75,12 +76,12 @@ class UserRepository {
     try {
       const user = await User.findById(id);
       if(!user) {
-        return new ErrorType(404, "Nije pronadjen korisnik", {id});
+        return new ErrorType(errorCodes.NotFound, "Nije pronadjen korisnik", {id});
       }
       return user;
     }
     catch(err) {
-      return new ErrorType(500, "Unutrasnja greska", { DbErr: "Connection error" });
+      return new ErrorType(errorCodes.InteralError, "Unutrasnja greska", { DbErr: "Connection error" });
     }
   }
 
@@ -92,12 +93,12 @@ class UserRepository {
     try {
       const user = await User.findByIdAndDelete(id);
       if(!user) {
-        return new ErrorType(404, "Korisnik nije pronadjen", { id });
+        return new ErrorType(errorCodes.NotFound, "Korisnik nije pronadjen", { id });
       }
       return user;
     }
     catch(err) {
-      return new ErrorType(500, "Unutrasnja greska", { DbErr: "Connection error" });
+      return new ErrorType(errorCodes.InteralError, "Unutrasnja greska", { DbErr: "Connection error" });
     }
   }
 
@@ -115,12 +116,12 @@ class UserRepository {
     try {
       const user = await User.findByIdAndUpdate(id, { Name: name, Coins: coins }, {new: true});
       if(!user) {
-        return new ErrorType(404, "Korisnik nije pronadjen", { id });
+        return new ErrorType(errorCodes.NotFound, "Korisnik nije pronadjen", { id });
       }
       return user;
     }
     catch(err) {
-      return new ErrorType(500, "Unutrasnja greska", { DbErr: "Connection error" });
+      return new ErrorType(errorCodes.InteralError, "Unutrasnja greska", { DbErr: "Connection error" });
     }
   }
 }

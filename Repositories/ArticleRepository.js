@@ -3,21 +3,22 @@ const ErrorType = require("../Responses/ErrorType");
 const CategoryRepository = require("../Repositories/CategoryRepository");
 const { writeLog } = require("../Utils/Logger");
 const { validatePagination, validateId } = require("../Utils/Transformations");
+const { errorTypes } = require("../Utils/Enums");
 
 // VALIDATION RETURNS NULL FOR SEMANTIC GYMNASTICS
 const validateName = (name) => {
   if(!name)
-    return new ErrorType(400, "Neophodan parametar", {name});
+    return new ErrorType(errorCodes.UserError, "Neophodan parametar", {name});
   return null
 }
 
 const validatePrice = (price) => {
   price = Number(price);
   if(!price) {
-    return new ErrorType(400, "Neophodan parametar", {price});
+    return new ErrorType(errorCodes.UserError, "Neophodan parametar", {price});
   }
   if(isNaN(price) || price <= 0) {
-    return new ErrorType(400, "Cena mora biti broj veci od 0", {price});
+    return new ErrorType(errorCodes.UserError, "Cena mora biti broj veci od 0", {price});
   }
 
   return null;
@@ -52,25 +53,25 @@ const create = async (name, price, categoryId) => {
   }
   catch(err) {
     writeLog("ERROR", err);
-    return new ErrorType(500, "Unutrasnja greska", {DbErr: "Greska pri radu sa bazom"});
+    return new ErrorType(errorCodes.InteralError, "Unutrasnja greska", {DbErr: "Greska pri radu sa bazom"});
   }
 }
 
 const getById = async (id) => {
   const status = validateId(id);
   if(status) {
-    return new ErrorType(404, "Nije pronadjen artikal", {id});
+    return new ErrorType(errorCodes.NotFound, "Nije pronadjen artikal", {id});
   }
   try {
     const article = await Article.findById(id);
     if(!article) {
-      return new ErrorType(404, "Artikal nije pronadjen", {id});
+      return new ErrorType(errorCodes.NotFound, "Artikal nije pronadjen", {id});
     }
     return article;
   }
   catch(err) {
     writeLog("ERROR", err);
-    return new ErrorType(500, "Unutrasnja greska", {DbErr: "Connection problem"});
+    return new ErrorType(errorCodes.NotFound, "Unutrasnja greska", {DbErr: "Connection problem"});
   }
 }
 
@@ -85,13 +86,13 @@ const updateById = async (id, name, price, categoryId) => {
       ...(price && {Price: price}),
     }, {new: true});
     if(!article) {
-      return new ErrorType(404, "Artikal nije pronadjen", {id});
+      return new ErrorType(errorCodes.NotFound, "Artikal nije pronadjen", {id});
     }
     return article;
   }
   catch(err) {
     writeLog("ERROR", err);
-    return new ErrorType(500, "Unutrasnja grska", {DbErr: "Changing problem"});
+    return new ErrorType(errorCodes.InteralError, "Unutrasnja grska", {DbErr: "Changing problem"});
   }
 }
 
@@ -103,13 +104,13 @@ const deleteById = async(id) => {
   try {
     const article = await Article.findByIdAndDelete(id);
     if(!article) {
-      return new ErrorType(404, "Artikal nije pronadjen", {id});
+      return new ErrorType(errorCodes.NotFound, "Artikal nije pronadjen", {id});
     }
     return article;
   }
   catch(err) {
     writeLog("ERROR", err);
-    return new ErrorType(400, "Unutrasnja greska", {DbErr: "Deletion error"});
+    return new ErrorType(errorCodes.InteralError, "Unutrasnja greska", {DbErr: "Deletion error"});
   }
 }
 
@@ -117,7 +118,6 @@ const get = async (ps, pc, categoryId) => {
   // Default ps, and pc
   ps = ps ?? 0;
   pc = pc ?? 5;
-  console.log(categoryId);
   const parameterError = validatePagination(ps, pc) || categoryId ? await validateCategory(categoryId) : null;
   if(parameterError) {
     return parameterError;
@@ -128,7 +128,7 @@ const get = async (ps, pc, categoryId) => {
   }
   catch(err) {
     writeLog("ERROR", err);
-    return new ErrorType(500, "Unutrasnja grska", {DbErr: "Fetching error"});
+    return new ErrorType(errorCodes.InteralError, "Unutrasnja grska", {DbErr: "Fetching error"});
   }
 }
 

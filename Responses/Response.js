@@ -34,7 +34,7 @@ class Response {
     if(obj instanceof SuccessType) {
       return this.handleSucces(obj);
     }
-    return this.response.status(200).json({
+    return this.response.status(errorCodes.Success).json({
       res: obj,
     })    
   }
