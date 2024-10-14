@@ -11,11 +11,11 @@ const createUser = async (req, res) => {
 
 const getAllUserInfo = async (req, res) => {
   // Page start, page count
-  let { ps, pc } = req.query;
+  let { ps, pc, nameFilter } = req.query;
   // inject
   const response = new Response(res);
 
-  response.handleResponse(await UserRepository.getPaginated(ps, pc));
+  response.handleResponse(await UserRepository.getPaginated(ps, pc, nameFilter));
   
 }
 
