@@ -5,8 +5,7 @@ const { errorCodes } = require("../Utils/Enums");
 
 const createQR = async (id) => {
   try {
-    const qrUrl = await QRCode.toDataURL(id.toString());
-    console.log(qrUrl);
+    const qrUrl = await QRCode.toDataURL(`${process.env.FRONT_URL}?${id}`);
     return qrUrl;
   } 
   catch(err) {
