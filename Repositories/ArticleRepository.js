@@ -3,7 +3,7 @@ const ErrorType = require("../Responses/ErrorType");
 const CategoryRepository = require("../Repositories/CategoryRepository");
 const { writeLog } = require("../Utils/Logger");
 const { validatePagination, validateId } = require("../Utils/Transformations");
-const { errorTypes } = require("../Utils/Enums");
+const { errorCodes } = require("../Utils/Enums");
 
 // VALIDATION RETURNS NULL FOR SEMANTIC GYMNASTICS
 const validateName = (name) => {
@@ -39,6 +39,7 @@ const validateCategory = async (categoryId) => {
 // TODO: IMPLEMENT CATEGORIES
 const create = async (name, price, categoryId) => {
   const status = validateName(name) || validatePrice(price) || await validateCategory(categoryId);
+  console.log(status);
   if(status) {
     return status;
   }
@@ -123,7 +124,9 @@ const get = async (ps, pc, categoryId) => {
     return parameterError;
   }
   try {
-    const articles = await Article.find({Category: categoryId}).limit(pc).skip(ps*pc);
+    const articles = await Article.find({
+      ...(categoryId ? {Category: categoryId} : null)
+    }).limit(pc).skip(ps*pc);
     return articles;
   }
   catch(err) {
