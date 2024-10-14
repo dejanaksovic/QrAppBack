@@ -2,7 +2,9 @@ const mongoose = require('mongoose');
 const User = require("../Models/User");
 const ErrorType = require("../Responses/ErrorType");
 const { validatePagination } = require("../Utils/Transformations")
+const { createQR } = require("../Utils/QrWork");
 const { errorCodes } = require("../Utils/Enums");
+const { writeLog } = require('../Utils/Logger');
 
 class UserRepository {
   static validateInput(name, initCoins) {
@@ -60,9 +62,19 @@ class UserRepository {
         return new ErrorType(errorCodes.InteralError, "Unutrasnja greska", { DbErr: "No connection" });
       }
 
+      const qrCode = await createQR(user._id);
+
+      if(qrCode instanceof ErrorType) {
+        return qrCode;
+      }
+
+      user.Qr = qrCode;
+      await user.save();
+
       return user;
     }
     catch(err) {
+      writeLog("ERROR", err);
       return new ErrorType(errorCodes.InteralError, "Unutrasnja greska", { DbErr: "No connection" });
     }
 

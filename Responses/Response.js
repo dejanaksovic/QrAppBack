@@ -1,6 +1,6 @@
 const ErrorType = require("./ErrorType");
 const SuccessType = require("./SuccessType");
-
+const { errorCodes } = require("../Utils/Enums");
 class Response {
   constructor(response) {
     this.response = response;

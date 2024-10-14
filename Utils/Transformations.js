@@ -1,12 +1,13 @@
 const mongoose = require("mongoose");
 const ErrorType = require("../Responses/ErrorType");
+const { errorCodes } = require("../Utils/Enums");
 
 const validatePagination = (pageStart, pageSlice) => {
   if(pageStart < 0) {
-    return new ErrorType(400, "Nevalidan parametar", { pageStart });
+    return new ErrorType(errorCodes.UserError, "Nevalidan parametar", { pageStart });
   }
   if(pageSlice <= 0) {
-    return new ErrorType(400, "Nevalidan parametar", { pageSlice });
+    return new ErrorType(errorCodes.UserError, "Nevalidan parametar", { pageSlice });
   }
 
   return null;
@@ -14,7 +15,7 @@ const validatePagination = (pageStart, pageSlice) => {
 
 const validateId = (id) => {
   if(!id || !mongoose.isValidObjectId(id)) {
-    return new ErrorType(404, "Nije pronadjen", {id});
+    return new ErrorType(errorCodes.NotFound, "Nije pronadjen", {id});
   }
 
   return null;
@@ -44,5 +45,5 @@ module.exports = {
   validatePagination,
   dateReadableFormat,
   validateId,
-  validateDate
+  validateDate,
 }
