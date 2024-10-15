@@ -25,12 +25,12 @@ class UserRepository {
     return true;
   }
 
-  static async getPaginated(pageStart, pageSlice, nameFilter) {
+  static async getPaginated(ps, pc, nameFilter) {
     // Init values
-    pageStart = pageStart ?? 0;
-    pageSlice = pageSlice ?? 5;
+    ps = ps ?? 0;
+    pc = pc ?? 5;
     nameFilter = nameFilter ?? "";
-    const status = validatePagination(pageStart, pageSlice);
+    const status = validatePagination(ps, pc);
     if(status instanceof ErrorType) {
       return status;
     }
@@ -38,7 +38,7 @@ class UserRepository {
       const users = await User.find({Name: {
         $regex: ".*" + nameFilter + ".*",
         $options: "i",
-      }}).skip(pageStart * pageSlice).limit(pageSlice);
+      }}).skip(ps * pc).limit(pc);
       return users;
     }
     catch(err) {
