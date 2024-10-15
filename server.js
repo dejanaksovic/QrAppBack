@@ -17,14 +17,15 @@ const categoryRouter = require("./Routers/CategoryRouter");
 const app = express();
 
 // CORS OPTIONS
-const corsOptions = {
+const corsOptions = process.env.ENVIROMENT.toUpperCase() === "DEV" ? null :
+{
 origin: process.env.FRONT_URL,
 methods: "GET, POST, PUT, PATCH, DELETE",
 }
 
 app.use(express.urlencoded());
 app.use(express.json());
-app.use(cors(process.env.ENVIROMENT === "DEV" ? corsOptions : undefined));
+app.use(cors(corsOptions));
 app.use(JsonNotValidMiddleware);
 // CONNECT TO DB
 connectDB(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@clusterqr.ifnvw.mongodb.net/?retryWrites=true&w=majority&appName=ClusterQR`);

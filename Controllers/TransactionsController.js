@@ -18,7 +18,7 @@ const getAllTransactions = async (req, res) => {
 
 const getUserTransactions = async (req, res) => {
   // Inject
-  const { userId } = req.params;
+  const { id } = req.params;
   const response = new Response(res);
   response.handleResponse(await TransactionRepository.getByUserId(id));
 }

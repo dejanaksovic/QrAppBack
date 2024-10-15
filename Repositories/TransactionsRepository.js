@@ -123,13 +123,17 @@ const create = async (orderToAdd, userId, type) => {
   }
 }
 
-const getByUserId = async (userId) => {
+const getByUserId = async (id) => {
   const validationError = validateId(id);
-  if(validateId) {
+  if(validationError) {
+    console.log("error", validationError);
     return validationError;
   }
   try {
-    const transaction = await Transaction.findBy({User: id});
+    const transaction = await Transaction.find({User: id}).populate({
+      path: "Order",
+      populate: "Article"
+    });
     if(!transaction) {
       return new ErrorType(404, "Tranzakcija nije pronadjena", {id});
     }
@@ -165,6 +169,9 @@ const get = async (ps, pc, dateStart, dateEnd) => {
   ps = ps ?? 0;
   pc = pc ?? 5;
 
+  dateStart = dateStart ?? new Date("2023");
+  dateEnd = dateEnd ?? new Date();
+
 
   const isValidDate = validateDate(dateStart) || validateDate(dateEnd);
 
@@ -174,10 +181,10 @@ const get = async (ps, pc, dateStart, dateEnd) => {
 
   try {
     const transactions = await Transaction.find({
-      createdAt: {
+      createdAt:  {
         $lte: dateEnd,
         $gte: dateStart,
-      }
+      },
     }).limit(pc).skip(pc*ps);
     return transactions;
   }

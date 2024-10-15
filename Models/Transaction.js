@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+process.env.ENVIROMENT.toUpperCase() == "DEV" ? mongoose.set("debug", true) : null; 
 
 const transactionSchema = new mongoose.Schema({
   User: {
