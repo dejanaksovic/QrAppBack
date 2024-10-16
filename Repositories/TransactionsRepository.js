@@ -185,7 +185,10 @@ const get = async (ps, pc, dateStart, dateEnd) => {
         $lte: dateEnd,
         $gte: dateStart,
       },
-    }).limit(pc).skip(pc*ps);
+    }).limit(pc).skip(pc*ps).populate({
+      path: "Order",
+      populate: "Article"
+    });
     return transactions;
   }
   catch(err) {

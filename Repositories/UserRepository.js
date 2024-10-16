@@ -82,7 +82,7 @@ class UserRepository {
 
   static async getUserById(id) {
     const status = this.validateId(id);
-    if(status instanceof ErrorType) {
+    if(status) {
       return status;
     }
     try {
@@ -93,6 +93,7 @@ class UserRepository {
       return user;
     }
     catch(err) {
+      writeLog("ERROR", err.message);
       return new ErrorType(errorCodes.InteralError, "Unutrasnja greska", { DbErr: "Connection error" });
     }
   }
