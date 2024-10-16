@@ -81,9 +81,9 @@ class UserRepository {
   }
 
   static async getUserById(id) {
-    const status = this.validateId(id);
-    if(status) {
-      return status;
+    const validId = this.validateId(id);
+    if(validId instanceof ErrorType) {
+      return validId;
     }
     try {
       const user = await User.findById(id);
